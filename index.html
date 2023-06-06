@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>ColCle</title>
+    <style type="text/css">
+        * {
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 4px;
+            border-radius: 4px;
+            border: 2px solid #bfbfbf;
+        }
+
+        input[type="text"]:focus,
+        ,
+        input[type="number"]:focus {
+            box-shadow: 0 0 4px #7f7fff;
+        }
+    </style>
+</head>
+
+<body>
+    <p>地球上の座標をカタカナ8文字に変換します。大体2メートルの分解能があります。</p>
+    <p>ダ行、ヲ、ン、小文字、伸ばし棒は使いません。</p>
+    <div>
+        <div>緯度<input type="number" id="longitude" value="34.75502654454021" step="0.000000001">経度<input type="number"
+                id="latitude" value="137.40838364506294" step="0.000000001"></div>
+        <div><input type="button" id="toColCle" value="↓変換↓"><input type="button" id="fromColCle" value="↑変換↑"></div>
+        <input type="text" id="p1" size="5">-<input type="text" id="p2" size="5"><br>
+    </div>
+
+    <div id="result"></div>
+
+    <script type="text/javascript">
+        const byId = id => document.getElementById(id);
+
+        const chs = "アイウエオカキクケコガギグゲゴサシスセソザジズゼゾタチツテトナニヌネノハヒフヘホバビブベボパピプペポマミムメモラリルレロヤユヨワ";
+
+        const convertToColCle = (lon, lat) => {
+            let y = Math.round(Math.min(1, Math.max(0, (lon + 90) / 180)) * Math.pow(2, 24));
+            let x = Math.round(Math.min(1, Math.max(0, (lat + 180) / 360)) * Math.pow(2, 24));
+            let ret = "";
+            for (let i = 0; i < 8; ++i) {
+                let m = 0;
+                for (let j = 0; j < 3; ++j) {
+                    if (x % 2 == 1) m += Math.pow(2, j * 2);
+                    if (y % 2 == 1) m += Math.pow(2, j * 2 + 1);
+                    x = Math.floor(x / 2);
+                    y = Math.floor(y / 2);
+                }
+                ret = chs[(m + i * 6) % 64] + ret;
+            }
+            return ret;
+        };
+        const convertFromColCle = (colcle) => {
+            let y = 0, x = 0;
+            for (let i = 7; i >= 0; --i) {
+                let m = -1;
+                for (let j = 0; j < 64; ++j) {
+                    if (chs[(j + i * 6) % 64] == colcle[7 - i]) {
+                        m = j; break;
+                    }
+                }
+                if (m < 0) {
+                    return [];
+                }
+                x *= 8;
+                y *= 8;
+                for (let j = 0; j < 3; ++j) {
+                    if (m % 2 == 1) x += Math.pow(2, j);
+                    m = Math.floor(m / 2);
+                    if (m % 2 == 1) y += Math.pow(2, j);
+                    m = Math.floor(m / 2);
+                }
+            }
+            return [y / Math.pow(2, 24) * 180 - 90, x / Math.pow(2, 24) * 360 - 180];
+        };
+
+        byId("toColCle").onclick = () => {
+            const lon = Number(byId("longitude").value);
+            const lat = Number(byId("latitude").value);
+            const colcle = convertToColCle(lon, lat);
+            byId("p1").value = colcle.slice(0, 4);
+            byId("p2").value = colcle.slice(4);
+            byId("result").innerHTML = `<br><iframe width="600" height="450" src="http://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
+        };
+        byId("fromColCle").onclick = () => {
+            const colcle = byId("p1").value + byId("p2").value;
+            const ll = convertFromColCle(colcle);
+            if (ll.length == 0) {
+                byId("result").innerHTML = "入力が不正です";
+                return;
+            }
+            const lon = ll[0];
+            const lat = ll[1];
+            byId("longitude").value = lon;
+            byId("latitude").value = lat;
+            byId("result").innerHTML = `<br><iframe width="600" height="450" src="http://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
+        };
+    </script>
+</body>
+
+</html>
