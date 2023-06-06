@@ -88,7 +88,7 @@
             const colcle = convertToColCle(lon, lat);
             byId("p1").value = colcle.slice(0, 4);
             byId("p2").value = colcle.slice(4);
-            byId("result").innerHTML = `<br><iframe width="600" height="450" src="http://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
+            byId("result").innerHTML = `<br><iframe width="600" height="450" src="https://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
         };
         byId("fromColCle").onclick = () => {
             const colcle = byId("p1").value + byId("p2").value;
@@ -101,7 +101,7 @@
             const lat = ll[1];
             byId("longitude").value = lon;
             byId("latitude").value = lat;
-            byId("result").innerHTML = `<br><iframe width="600" height="450" src="http://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
+            byId("result").innerHTML = `<br><iframe width="600" height="450" src="https://maps.google.co.jp/maps?ll=${lon},${lat}&q=${lon},${lat}&z=17&output=embed" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>`;
         };
     </script>
 </body>
