@@ -75,7 +75,7 @@
             for (let i = 0; i < 8; ++i) {
                 if (ret[i] == "ン") {
                     if (i == 0 || ret[i - 1] == "ン") {
-                        ret[i] = "ヌ";
+                        ret = ret.slice(0, i) + "ヌ" + ret.slice(i + 1);
                     }
                 }
             }
